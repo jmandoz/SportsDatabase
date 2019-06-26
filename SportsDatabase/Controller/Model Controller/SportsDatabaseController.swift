@@ -48,8 +48,8 @@ class SportsDatabaseController {
             }
             do {
                 let jsDecoder = JSONDecoder()
-                let player = try jsDecoder.decode(Player.self, from: data)
-                completion(player)
+                let player = try jsDecoder.decode(TopLevelJson.self, from: data)
+                completion(player.player.first!)
             } catch {
                 print("error decoding: \(error.localizedDescription)")
                 completion(nil)
@@ -59,26 +59,52 @@ class SportsDatabaseController {
     }
     
     func fetchPlayerImage(_ player: Player, completion: @escaping ((UIImage?) -> Void)) {
-        guard let urlForImage = URL(string: player.strCutout.playerImageURL) else {
-            print("no URL for Image")
-            completion(nil)
-            return
-        }
-        let dataTask = URLSession.shared.dataTask(with: urlForImage) { (data, _, error) in
-            if let error = error {
-                print("error getting player image")
+        if player.strCutout != nil {
+            guard let playerImage = player.strCutout else {return}
+            guard let urlForImage = URL(string: playerImage) else {
+                print("no URL for Image")
                 completion(nil)
                 return
             }
-            guard let data = data else {
-                print("data was not found")
+            let dataTask = URLSession.shared.dataTask(with: urlForImage) { (data, _, error) in
+                if let error = error {
+                    print("error getting player image")
+                    completion(nil)
+                    return
+                }
+                guard let data = data else {
+                    print("data was not found")
+                    completion(nil)
+                    return
+                }
+                let image = UIImage(data: data)
+                completion(image)
+            }
+            dataTask.resume()
+        } else {
+            guard let playerImage = player.strThumb else {return}
+            guard let urlForImage = URL(string: playerImage) else {
+                print("no URL for Image")
                 completion(nil)
                 return
             }
-            let image = UIImage(data: data)
-            completion(image)
+            let dataTask = URLSession.shared.dataTask(with: urlForImage) { (data, _, error) in
+                if let error = error {
+                    print("error getting player image")
+                    completion(nil)
+                    return
+                }
+                guard let data = data else {
+                    print("data was not found")
+                    completion(nil)
+                    return
+                }
+                let image = UIImage(data: data)
+                completion(image)
+            }
+            dataTask.resume()
         }
-        dataTask.resume()
+        
     }
     
 }

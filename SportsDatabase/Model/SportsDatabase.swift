@@ -8,16 +8,20 @@
 
 import Foundation
 
+struct TopLevelJson: Decodable {
+    let player: [Player]
+}
+
 struct Player: Decodable {
-    let strName: String
+    let strPlayer: String
     let strSport: String
     let strTeam: String
-    let strNumber: String
+    var strNumber: String?
     let strHeight: String
     let strWeight: String
     let strDescriptionEN: String
-    let strCutout: Image
+    var strCutout: String?
+    var strWage: String?
+    var strThumb: String?
 }
-struct Image: Decodable {
-    let playerImageURL: String
-}
+
