@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Player {
+struct Player: Decodable {
     let strName: String
     let strSport: String
     let strTeam: String
@@ -16,4 +16,8 @@ struct Player {
     let strHeight: String
     let strWeight: String
     let strDescriptionEN: String
+    let strCutout: Image
+}
+struct Image: Decodable {
+    let playerImageURL: String
 }
